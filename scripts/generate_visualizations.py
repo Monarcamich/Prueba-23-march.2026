@@ -12,6 +12,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.data_fetcher import get_fetcher
 from src.etl_pipeline import Pipeline
+from src.analysis import (
+    identify_tyre_degradation,
+    calculate_consistency,
+    compare_pilots,
+    extract_stint_data,
+)
 from src.visualizers import (
     plot_pace_progression,
     plot_lap_time_distribution,
@@ -20,7 +26,12 @@ from src.visualizers import (
     plot_pace_delta_scatter,
     plot_pace_with_trend,
     plot_multi_driver_comparison,
+    plot_degradation_comparison,
+    plot_consistency_analysis,
+    plot_prediction_vs_actual,
+    plot_cluster_analysis,
     save_figure,
+    generate_all_visualizations,
 )
 import logging
 
@@ -74,117 +85,55 @@ def main():
     single_race_df = all_race_data[0]
     race_round = int(single_race_df["round"].iloc[0])
 
-    print(f"\nGenerating visualizations for {len(all_race_data)} races...")
+    print(f"\nAnalyzing data and generating visualizations...")
+
+    # Run analysis functions
+    print("  - Analyzing tire degradation...")
+    degradation = identify_tyre_degradation(single_race_df)
+
+    print("  - Analyzing driver consistency...")
+    consistency = calculate_consistency(single_race_df)
+
+    print("  - Comparing drivers...")
+    comparison = compare_pilots(single_race_df)
+
+    print("  - Extracting stint data...")
+    stints = extract_stint_data(single_race_df)
 
     # Output directory
     output_dir = Path(__file__).parent.parent / "outputs"
     output_dir.mkdir(exist_ok=True)
 
-    # Create visualizations
-    figs = []
-    names = []
-
-    # 1. Pace progression (all races combined)
-    print("\n  1. Pace Progression Chart...")
-    try:
-        fig = plot_pace_progression(combined_df, title="Pace Progression - Multiple Races")
-        save_figure(fig, "01_pace_progression", str(output_dir))
-        figs.append(fig)
-        names.append("Pace Progression")
-        print("     ✓ Created")
-    except Exception as e:
-        print(f"     ✗ Error: {e}")
-
-    # 2. Lap time distribution
-    print("  2. Lap Time Distribution...")
-    try:
-        fig = plot_lap_time_distribution(combined_df, title="Lap Time Distribution")
-        save_figure(fig, "02_lap_distribution", str(output_dir))
-        figs.append(fig)
-        names.append("Lap Time Distribution")
-        print("     ✓ Created")
-    except Exception as e:
-        print(f"     ✗ Error: {e}")
-
-    # 3. Driver comparison
-    print("  3. Driver Comparison...")
-    try:
-        fig = plot_driver_comparison(combined_df, title="Average Pace by Driver")
-        save_figure(fig, "03_driver_comparison", str(output_dir))
-        figs.append(fig)
-        names.append("Driver Comparison")
-        print("     ✓ Created")
-    except Exception as e:
-        print(f"     ✗ Error: {e}")
-
-    # 4. Pace delta scatter
-    print("  4. Pace Delta (Lap-to-Lap Change)...")
-    try:
-        fig = plot_pace_delta_scatter(single_race_df, title=f"Pace Delta - Race Round {race_round}")
-        save_figure(fig, "04_pace_delta", str(output_dir))
-        figs.append(fig)
-        names.append("Pace Delta")
-        print("     ✓ Created")
-    except Exception as e:
-        print(f"     ✗ Error: {e}")
-
-    # 5. Degradation heatmap (limited to prevent huge charts)
-    print("  5. Degradation Heatmap...")
-    try:
-        # Limit to first race for readability
-        heatmap_df = all_race_data[0].copy()
-        fig = plot_degradation_heatmap(heatmap_df, title=f"Tire Degradation - Race {race_round}")
-        save_figure(fig, "05_degradation_heatmap", str(output_dir))
-        figs.append(fig)
-        names.append("Degradation Heatmap")
-        print("     ✓ Created")
-    except Exception as e:
-        print(f"     ✗ Error: {e}")
-
-    # 6. Individual driver trend
-    print("  6. Individual Driver Trend...")
-    try:
-        top_driver = combined_df.groupby("driver_id")["lap_time_seconds"].mean().idxmin()
-        fig = plot_pace_with_trend(combined_df, top_driver, window=3, title=f"{top_driver} - Pace with Trend")
-        save_figure(fig, "06_driver_trend", str(output_dir))
-        figs.append(fig)
-        names.append(f"Driver Trend ({top_driver})")
-        print("     ✓ Created")
-    except Exception as e:
-        print(f"     ✗ Error: {e}")
-
-    # 7. Multi-driver comparison
-    print("  7. Multi-Driver Comparison (4-panel)...")
-    try:
-        top_4 = (
-            combined_df.groupby("driver_id")["lap_time_seconds"]
-            .mean()
-            .sort_values()
-            .head(4)
-            .index.tolist()
-        )
-        fig = plot_multi_driver_comparison(combined_df, top_4, title="Top 4 Drivers - Individual Pace")
-        save_figure(fig, "07_multi_driver_comparison", str(output_dir))
-        figs.append(fig)
-        names.append("Multi-Driver Comparison")
-        print("     ✓ Created")
-    except Exception as e:
-        print(f"     ✗ Error: {e}")
+    # Generate all visualizations
+    print(f"\nGenerating {11} visualization charts...")
+    generated = generate_all_visualizations(
+        single_race_df,
+        degradation_dict=degradation,
+        consistency_dict=consistency,
+        comparison_df=comparison,
+        output_dir=str(output_dir)
+    )
 
     # Summary
     print("\n" + "=" * 70)
-    print("VISUALIZATION SUMMARY".center(70))
+    print("VISUALIZATION GENERATION COMPLETE".center(70))
     print("=" * 70)
 
-    print(f"\n✓ Generated {len(figs)} visualizations:")
-    for i, name in enumerate(names, 1):
-        print(f"  {i}. {name}")
+    print(f"\n✓ Generated {len(generated)} visualizations:\n")
+    for i, (name, filename) in enumerate(sorted(generated.items()), 1):
+        print(f"  {i:2d}. {name:25s} → {filename}")
 
-    print(f"\n✓ All charts saved to: {output_dir}")
-    print("\nYou can now:")
-    print("  - View PNG files in outputs/ directory")
-    print("  - Use these as references for Jupyter notebooks")
-    print("  - Incorporate into reports and presentations")
+    print(f"\n📊 All charts saved to: {output_dir}")
+    print("\nGenerated visualizations:")
+    print("  • Pace progression over race")
+    print("  • Lap time distribution by driver")
+    print("  • Driver pace comparison")
+    print("  • Pace delta heatmap (degradation)")
+    print("  • Advanced degradation analysis")
+    print("  • Driver consistency metrics")
+    print("  • Pace delta scatter plots")
+    print("  • Prediction vs actual (ML models)")
+    print("  • Driver clustering analysis")
 
     print("\n" + "=" * 70 + "\n")
 
