@@ -212,94 +212,65 @@ plt.show()
 - [x] Gold layer (metric derivation)
 
 ### Phase 3: Exploratory Data Analysis 🔄 IN PROGRESS
-- [x] Notebook: Distribution analysis
-- [x] Identify pace patterns
-- [x] Degradation models
-- [x] Driver comparisons
+- [ ] Notebook: Distribution analysis
+- [ ] Identify pace patterns
+- [ ] Degradation models
+- [ ] Driver comparisons
 
-### Phase 4: Advanced Visualizations ✅ COMPLETE
-- [x] Lap time progression charts (`plot_pace_progression`)
-- [x] Pace delta heatmaps (`plot_degradation_heatmap`)
-- [x] Degradation analysis (`plot_degradation_comparison`)
-- [x] Driver comparison plots (`plot_driver_comparison`)
-- [x] Consistency analysis (`plot_consistency_analysis`)
-- [x] Prediction validation (`plot_prediction_vs_actual`)
-- [x] 13 professional PNG visualizations generated
+### Phase 4: Visualizations 📋 TODO
+- [ ] Lap time progression charts
+- [ ] Pace delta heatmaps
+- [ ] Degradation estimates
+- [ ] Driver comparison plots
 
-### Phase 5: Predictive Models ✅ COMPLETE
-- [x] Degradation prediction (`TyreDegradationPredictor`)
-- [x] Pace trajectory forecasting (`PaceTrajectoryPredictor`)
-- [x] Driver clustering (`DriverClusterer`)
-- [x] 320-line ML module with 3 production-ready classes
-- [x] Cross-validation and performance metrics
+### Phase 5: Predictive Models 📋 TODO
+- [ ] Degradation prediction
+- [ ] Pace trajectory forecasting
+- [ ] Driver clustering
 
-### Phase 6: Comprehensive Testing & CI/CD ✅ COMPLETE
-- [x] Unit tests: 131 tests across 3 modules (94% pass rate)
-- [x] Test modules: `test_analysis.py`, `test_predictive_models.py`, `test_visualizers.py`
-- [x] GitHub Actions workflow (Python 3.10, 3.11, 3.12)
-- [x] Pre-commit hooks (black, ruff, mypy)
-- [x] pytest configuration and coverage reporting
-- [x] Comprehensive testing guide (`TESTING.md`)
+### Phase 6: Documentation 📋 TODO
+- [ ] Final notebook polish
+- [ ] HTML report generation
+- [ ] Full workflow script
 
 ## Development
 
 ### Running Tests
 ```bash
-# Run all tests
-pytest tests/
-
-# Run specific test module
-pytest tests/test_analysis.py
-
-# Run with coverage
-pytest tests/ --cov=src/ --cov-report=html
-
-# Watch for code quality
-black src/ scripts/
-ruff check src/ scripts/
-mypy src/
+python scripts/test_pipeline.py
+pytest tests/  # When tests are added
 ```
 
-### Code Quality Tools
-- **black**: Code formatting (auto-format)
-- **ruff**: Linting (style and logical errors)
-- **mypy**: Type checking
-- **pytest**: Testing framework (131 tests, 94% pass rate)
+### Code Style
+- Uses `black` for formatting (install with `pip install -e ".[dev]"`)
+- Uses `ruff` for linting
 
-### Pre-commit Hooks
-Automatically run code quality checks before commits:
+Format code:
 ```bash
-pre-commit install  # First time only
-git commit -m "message"  # Hooks run automatically
+black src/ scripts/ notebooks/
 ```
 
-### CI/CD Pipeline
-GitHub Actions automatically run on:
-- Push to `master`, `main`, or `develop` branches
-- Pull requests
-- Tests on Python 3.10, 3.11, 3.12
-- Linting, formatting, and type checking
-
-See `.github/workflows/tests.yml` for configuration.
+### Contributing
+1. Create a branch for your feature
+2. Implement changes
+3. Test with `test_pipeline.py`
+4. Commit with clear messages
 
 ## Next Steps
 
-### Completed (71% of project)
-Phases 1-6 are complete with:
-- ✅ Robust ETL pipeline with 3-layer architecture
-- ✅ 13 professional data visualizations
-- ✅ 3 machine learning predictive models
-- ✅ 131 comprehensive tests with 94% pass rate
-- ✅ Automated CI/CD pipeline with GitHub Actions
-- ✅ Code quality enforcement (black, ruff, mypy)
+1. **Complete EDA Notebook** (`01_eda_ritmo.ipynb`)
+   - Load processed race data
+   - Explore pace distributions
+   - Identify interesting patterns
 
-### Available for Future Development
-1. **Complete Phase 3 EDA** - Finish exploratory analysis notebook (2 hours)
-2. **Fix Remaining Tests** - Address 5 edge case failures for 100% pass rate (1 hour)
-3. **Phase 7a: API Development** - FastAPI REST endpoints for models (4-5 hours)
-4. **Phase 7b: Containerization** - Docker setup for deployment (2-3 hours)
-5. **Advanced ML Features** - XGBoost, ensemble models, hyperparameter tuning (4-6 hours)
-6. **Frontend Dashboard** - Streamlit interactive dashboard (3-4 hours)
+2. **Build Visualization Suite** (`02_visualizaciones_carrera.ipynb`)
+   - Time progression charts
+   - Degradation analysis
+   - Driver comparisons
+
+3. **Develop Predictive Models** (optional)
+   - Pace trajectory prediction
+   - Tire degradation estimation
 
 ## References
 
@@ -320,6 +291,5 @@ For questions or issues:
 
 ---
 
-**Last Updated**: March 24, 2026
-**Project Completion**: 71% (6 of 7 + phases complete)
-**Status**: Core functionality complete | Ready for deployment or extension
+**Last Updated**: March 2024
+**Status**: Initial Development - Phases 1-2 Complete, Phase 3 In Progress
